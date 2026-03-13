@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
@@ -77,7 +79,12 @@ fun WearApp() {
                 Text(if (controllerState.value?.isPlaying == true) "Pause" else "Play Stream")
             }
 
-            Button(onClick = { /* TODO: Trigger SyncWorker manually */ }) {
+            Button(
+                onClick = { 
+                    val syncRequest = OneTimeWorkRequestBuilder<SyncWorker>().build()
+                    WorkManager.getInstance(context).enqueue(syncRequest)
+                }
+            ) {
                 Text("Manual Sync")
             }
 
@@ -90,6 +97,18 @@ fun WearApp() {
 
 @Composable
 fun SearchScreen() {
-    // Placeholder for search implementation
-    Text("Search Screen")
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Search Library")
+        // Basic search UI scaffolding
+        Button(onClick = { /* TODO: Trigger LibraryDao.searchBooks */ }) {
+            Text("Books")
+        }
+        Button(onClick = { /* TODO: Trigger LibraryDao.searchSeries */ }) {
+            Text("Series")
+        }
+    }
 }
